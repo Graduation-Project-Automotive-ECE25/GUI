@@ -1,0 +1,37 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>Images/background(1).png</file>
+        <file>Images/background.png</file>
+        <file>Images/background_800x300.png</file>
+        <file>Images/circle.png</file>
+        <file>Images/rectangle.png</file>
+        <file>Images/Speedo.png</file>
+        <file>Images/top bar.png</file>
+        <file>LeftScreen/Images/car.png</file>
+        <file>LeftScreen/Images/Model 3.svg</file>
+        <file>LeftScreen/LeftScreen.qml</file>
+        <file>Map/NavigationSearchBox.qml</file>
+        <file>Map/MapView.qml</file>
+        <file>MainDashboard.qml</file>
+        <file>Images/rectangle_cropped.png</file>
+        <file>Images/Icon-Search.png</file>
+        <file>Images/mapIcon.png</file>
+        <file>Images/backArrow.png</file>
+        <file>ClickableImage/ClickableImage.qml</file>
+        <file>Images/locationMarker.png</file>
+        <file>Images/battery_light.png</file>
+        <file>coordinates.txt</file>
+        <file>Images/emptyBG.jpg</file>
+        <file>Images/Car.png</file>
+        <file>Images/messageBoxBG.jpg</file>
+        <file>Images/Model_3.svg</file>
+        <file>Images/locationlogo.png</file>
+        <file>Images/rightArrow.gif</file>
+        <file>Images/leftArrow.gif</file>
+        <file>Images/rectangle_1.png</file>
+        <file>Images/main control bar.svg</file>
+        <file>Images/ok-64.png</file>
+        <file>Message_screen/Message.qml</file>
+    </qresource>
+</RCC>
