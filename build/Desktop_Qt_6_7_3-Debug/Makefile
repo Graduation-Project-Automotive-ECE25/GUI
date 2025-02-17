@@ -1201,9 +1201,11 @@ qrc_qml.cpp: ../../qml.qrc \
 		../../Images/ok-64.png \
 		../../Images/locationMarker.png \
 		../../Images/leftArrow.gif \
+		../../Images/lock.svg \
 		../../Images/emptyBG.jpg \
 		../../Images/background.png \
 		../../Images/Speedo.png \
+		../../Images/cameraicon.png \
 		../../Images/main\ control\ bar.svg \
 		../../Images/Icon-Search.png \
 		../../Images/Car.png \
@@ -1211,19 +1213,22 @@ qrc_qml.cpp: ../../qml.qrc \
 		../../Images/battery_light.png \
 		../../Images/background_800x300.png \
 		../../Images/mapIcon.png \
+		../../Images/reboot.png \
+		../../Images/heater.svg \
 		../../Images/circle.png \
 		../../Images/messageBoxBG.jpg \
 		../../Images/top\ bar.png \
+		../../Images/terminal.png \
+		../../Images/navigation_light.svg \
+		../../Images/whiteMapIcon.png \
 		../../Images/rectangle_1.png \
 		../../Images/rectangle_cropped.png \
 		../../Images/Model_3.svg \
+		../../Images/headlights.svg \
 		../../Images/rectangle.png \
 		../../Images/rightArrow.gif \
+		../../UserDefined_functions/ClickableImage.qml \
 		../../Message_screen/Message.qml \
-		../../ClickableImage/ClickableImage.qml \
-		../../LeftScreen/LeftScreen.qml \
-		../../LeftScreen/Images/Model\ 3.svg \
-		../../LeftScreen/Images/car.png \
 		../../Map/NavigationSearchBox.qml \
 		../../Map/MapView.qml
 	/home/mahmoud/Programs/Qt/6.7.3/gcc_64/libexec/rcc -name qml ../../qml.qrc -o qrc_qml.cpp

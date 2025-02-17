@@ -8,9 +8,6 @@
         <file>Images/rectangle.png</file>
         <file>Images/Speedo.png</file>
         <file>Images/top bar.png</file>
-        <file>LeftScreen/Images/car.png</file>
-        <file>LeftScreen/Images/Model 3.svg</file>
-        <file>LeftScreen/LeftScreen.qml</file>
         <file>Map/NavigationSearchBox.qml</file>
         <file>Map/MapView.qml</file>
         <file>MainDashboard.qml</file>
@@ -18,7 +15,6 @@
         <file>Images/Icon-Search.png</file>
         <file>Images/mapIcon.png</file>
         <file>Images/backArrow.png</file>
-        <file>ClickableImage/ClickableImage.qml</file>
         <file>Images/locationMarker.png</file>
         <file>Images/battery_light.png</file>
         <file>coordinates.txt</file>
@@ -33,5 +29,14 @@
         <file>Images/main control bar.svg</file>
         <file>Images/ok-64.png</file>
         <file>Message_screen/Message.qml</file>
+        <file>Images/headlights.svg</file>
+        <file>Images/lock.svg</file>
+        <file>Images/heater.svg</file>
+        <file>Images/terminal.png</file>
+        <file>Images/navigation_light.svg</file>
+        <file>Images/reboot.png</file>
+        <file>Images/whiteMapIcon.png</file>
+        <file>UserDefined_functions/ClickableImage.qml</file>
+        <file>Images/cameraicon.png</file>
     </qresource>
 </RCC>

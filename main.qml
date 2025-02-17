@@ -1,9 +1,8 @@
 import QtQuick 2.11
 import QtQuick.Window 2.11
 
+import "UserDefined_functions"
 import "Map"
-import "LeftScreen"
-import "ClickableImage"
 import "Message_screen"
 
 
@@ -17,7 +16,6 @@ Window {
     //     return { width: width, height: height };
     // }
 
-
     visible: true
     // width: calculateDimensions().width
     // height: calculateDimensions().height
@@ -27,18 +25,15 @@ Window {
 
     color:"#F1F1F1"
 
-
     MainDashboard {
         id: mainDashboard
         anchors.centerIn: window.contentItem
         visible: true                           // Initially visible
     }
 
-
-
     ClickableImage {
         id: mapIcon
-        source: "qrc:Images/mapIcon.png"
+        source: "qrc:/Images/whiteMapIcon.png"
 
         width: 80
         height: 80
@@ -46,7 +41,7 @@ Window {
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
-            bottomMargin: 110
+            bottomMargin: 10
         }
 
         visible: true                           // Initially visible
@@ -54,8 +49,7 @@ Window {
         onClicked: {
             console.log("Open Navigation")
             mapView.visible = true              // Show MapView when clicked
-            mainDashboard.visible = false       // Hide main Dashboard
-            mapIcon.visible = false             // Hide map icon
+            hideIcons()
         }
     }
 
@@ -65,10 +59,81 @@ Window {
         visible: false                          // Initially hidden
     }
 
+    ClickableImage {
+        id: terminalIcon
+        source: "qrc:/Images/terminal.png"
+
+        width: 60
+        height: 60
+
+        anchors {
+            bottom: parent.bottom
+            bottomMargin: 17
+            left: mapIcon.right
+            leftMargin: 120
+        }
+
+        visible: true                           // Initially visible
+
+        onClicked: {
+            console.log("Open Terminal")
+        }
+    }
+
+    ClickableImage {
+        id: rebootIcon
+        source: "qrc:/Images/reboot.png"
+
+        width: 80
+        height: 80
+
+        anchors {
+            bottom: parent.bottom
+            bottomMargin: 9
+            left: terminalIcon.right
+            leftMargin: 120
+        }
+
+        visible: true                           // Initially visible
+
+        onClicked: {
+            console.log("Reboot System")
+        }
+    }
+
+    ClickableImage {
+        id: cameraIcon
+        source: "qrc:/Images/cameraicon.png"
+
+        width: 90
+        height: 60
+
+        anchors {
+            bottom: parent.bottom
+            bottomMargin: 15
+            right: mapIcon.left
+            rightMargin: 120
+        }
+
+        visible: true                           // Initially visible
+
+        onClicked: {
+            console.log("Open Camera")
+        }
+    }
+
     Message {
         id: messagepage
         anchors.fill: parent
-        visible: true                          // Initially hidden
+        visible: true                          // Initially visible
     }
 
+    function hideIcons()
+    {
+        mainDashboard.visible = false       // Hide main Dashboard
+        mapIcon.visible = false             // Hide map icon
+        terminalIcon.visible = false        // Hide terminal icon
+        rebootIcon.visible = false          // Hide reboot icon
+        cameraIcon.visible = false          // Hide camera icon
+    }
 }

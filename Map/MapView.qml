@@ -1,11 +1,9 @@
 import QtQuick 2.15
-
 import QtLocation 5.11
 import QtLocation 6.8
 import QtPositioning 5.11
-// import com.example.geolocation 1.0
 
-import "../ClickableImage"
+import "../UserDefined_functions"
 
 
 Rectangle {
@@ -111,19 +109,6 @@ Rectangle {
         }
     }
 
-    // ClickableImage {
-    //     source: "qrc: Images/battery_light.png"
-    //     width: 70
-    //     height: 70
-    //     anchors.centerIn: parent
-    //     onClicked: {
-    //         const success = geoHandler.loadFromFile(coordinates.txt)
-    //         if (!success) {
-    //             console.log("Failed to load coordinates from file.")
-    //         }
-    //     }
-    // }
-
     ClickableImage {
         id: backArrow
         source: "qrc:Images/backArrow.png"
@@ -139,9 +124,8 @@ Rectangle {
 
         onClicked: {
             console.log("Back to Dashboard")
-            mainDashboard.visible = true        // Show main Dashboard
-            mapIcon.visible = true              // Show map icon
             mapView.visible = false             // Hide MapView
+            showIcons()
         }
     }
 
@@ -155,5 +139,14 @@ Rectangle {
             topMargin: 25
         }
 
+    }
+
+    function showIcons()
+    {
+        mainDashboard.visible = true       // show main Dashboard
+        mapIcon.visible = true             // show map icon
+        terminalIcon.visible = true        // show terminal icon
+        rebootIcon.visible = true          // show reboot icon
+        cameraIcon.visible = true          // show camera icon
     }
 }
