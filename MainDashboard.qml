@@ -82,7 +82,7 @@ Item {
                     }
                 }
                 Connections {
-                    target: parent
+                    target: backend
                     onSpeedValueChanged: myCanvas3.requestPaint()
                 }
             }
@@ -133,8 +133,8 @@ Item {
 
                     ctx.beginPath();
                     ctx.moveTo(width / 2 , height / 2 );
-                    var needleAngle = Math.PI / 2 + (speedValue / 120) * Math.PI * 1.6; // Update angle based on speed
-                    var needleLength = 162;
+                    var needleAngle = Math.PI / 2 + (backend.speedValue / 120) * Math.PI * 1.6;
+                    var needleLength = 182;
                     ctx.lineTo(width / 2 + needleLength * Math.cos(needleAngle),
                                height / 2 + needleLength * Math.sin(needleAngle));
                     ctx.lineWidth = 5;
@@ -143,7 +143,7 @@ Item {
                 }
 
                 Connections {
-                    target: parent
+                    target: backend
                     onSpeedValueChanged: myCanvas.requestPaint()
                 }
             }
@@ -188,22 +188,27 @@ Item {
 
         //////////////////////////////////////////////////////////////////////////////// will be removed
         Rectangle {
-            id:speed_incrementer
-            width: 40
-            height: 40
-            color: "transparent"
-            x: parent.width / 2 - width / 2
-            y: parent.height / 2 - height / 2
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    speedValue = speedValue + 1;  // Limit to max 120
-                    myCanvas.requestPaint();
-                    if (speedValue == 121)
-                        speedValue = 0;
-                }
+            id: speed_incrementer
+            width: 80
+            height: 50
+            border.color: "black"
+            border.width: 1
+            color: car_gauge.color
+            anchors {
+                right: car_gauge.right
+                rightMargin: 95
+                bottom: parent.bottom
+                bottomMargin: 110
             }
+            Text {
+                id: speedText
+                anchors.centerIn: parent
+                text: backend.speedValue.toString()
+                color: "blue"
+                font.pixelSize: 60
+                font.bold: true
+            }
+        }
 
             // Text {
             //     id: speedText
@@ -214,7 +219,7 @@ Item {
             // }
         }
         /////////////////////////////////////////////////////////////////////////////////////////
-    }
+
 
     Item {
         id: carguage_rpm
@@ -427,46 +432,6 @@ Item {
             color: "transparent"
             anchors.fill: parent
 
-            // AnimatedImage {                                      // for ongoing use (after backend)
-            //     id: turnRight
-            //     source: "qrc:Images/rightArrow.gif"
-            //     width: 70
-            //     height: 70
-            //     anchors.right: parent.right
-            //     visible: false
-
-            //     // onCurrentIndexChanged:{
-            //     //     console.log("Turn Right")
-            //     //     visible: {
-            //     //         switch(currentIndex) {
-            //     //             case 0: return true;
-            //     //             case 1: return false;
-            //     //             default: return false;
-            //     //         }
-            //     //     }
-            //     // }
-            // }
-
-            // AnimatedImage {                                      // for ongoing use (after backend)
-            //     id: turnLeft
-            //     source: "qrc:Images/leftArrow.gif"
-            //     width: 70
-            //     height: 70
-            //     anchors.left: parent.left
-            //     visible: false
-
-            //     // onCurrentIndexChanged:{
-            //     //     console.log("Turn Left")
-            //     //     visible: {
-            //     //         switch(currentIndex) {
-            //     //             case 0: return true;
-            //     //             case 1: return false;
-            //     //             default: return false;
-            //     //         }
-            //     //     }
-            //     // }
-            // }
-
             MouseArea {
                 width: 70
                 height: 70
@@ -474,18 +439,17 @@ Item {
 
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onClicked: {
-                    if (turnRight.visible) {
-                        turnRight.visible = false
-                    }
+                // onClicked: {
+                //     if (turnRight.visible) {
+                //         turnRight.visible = false
+                //     }
 
-                    else {
-                        turnsignalstimer.start()
-                        turnRight.visible = true
-                        console.log("Turn Right")
-                    }
-                }
-
+                //     else {
+                //         turnsignalstimer.start()
+                //         turnRight.visible = true
+                //         console.log("Turn Right")
+                //     }
+                // }
                 AnimatedImage {
                     id: turnRight
                     source: "qrc:Images/rightArrow.gif"
@@ -500,16 +464,16 @@ Item {
                 anchors.left: parent.left
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onClicked: {
-                    if (turnLeft.visible) {
-                        turnLeft.visible = false
-                    }
-                    else {
-                        turnsignalstimer.start()
-                        turnLeft.visible = true
-                        console.log("Turn Left")
-                    }
-                }
+                // onClicked: {
+                //     if (turnLeft.visible) {
+                //         turnLeft.visible = false
+                //     }
+                //     else {
+                //         turnsignalstimer.start()
+                //         turnLeft.visible = true
+                //         console.log("Turn Left")
+                //     }
+                // }
 
                 AnimatedImage {
                     id: turnLeft
@@ -527,6 +491,32 @@ Item {
                     turnLeft.visible = false
                 }
             }
+        }
+        Connections {
+            target: backend
+            onSignMessageChanged:{
+                if(backend.signMessage === "right"){
+                    if (turnRight.visible) {
+                        turnRight.visible = false
+                    }
+                    else {
+                    turnsignalstimer.start()
+                    turnRight.visible = true
+                    console.log("Turn Right")
+                    }
+                }
+                else if(backend.signMessage === "left"){
+                    if (turnLeft.visible) {
+                        turnLeft.visible = false
+                    }
+                    else {
+                    turnsignalstimer.start()
+                    turnLeft.visible = true
+                    console.log("Turn left")
+                    }
+                }
+            }
+
         }
     }
 

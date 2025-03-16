@@ -1,6 +1,6 @@
 import QtQuick 2.15
 import Qt5Compat.GraphicalEffects
-
+import QtQuick.Controls
 import "../UserDefined_functions"
 
 
@@ -24,6 +24,26 @@ Item {
         id: border
         source: "qrc:Images/rectangle.png"
         anchors.centerIn: parent.Center
+    }
+
+    Text {
+        text: qsTr(backend.warningMessage)
+        // messagepage.visible: backend.warningMessage
+        font.family: "Helvetica"
+        font.pointSize: 40
+        font.bold: true
+        color: "blue"
+        style: Text.Outline
+        styleColor: "#fefe00"
+
+        width: 340
+        horizontalAlignment: Text.AlignHCenter
+        anchors {
+            horizontalCenter : border.horizontalCenter
+            verticalCenter : border.verticalCenter
+
+        }
+
     }
 
     Rectangle {
@@ -66,6 +86,9 @@ Item {
         onClicked: {
             messagepage.visible = false              // Show MapView when clicked
             mainDashboard.visible = true             // Hide main Dashboard
+            //backend.clearWarningMessage()
         }
     }
+
+
 }

@@ -1,5 +1,7 @@
 import QtQuick 2.11
 import QtQuick.Window 2.11
+import QtQuick.Controls 2.15
+import QtQuick.Shapes 1.15
 
 import "UserDefined_functions"
 import "Map"
@@ -9,16 +11,8 @@ import "Message_screen"
 Window {
     id: window
 
-    // function calculateDimensions() {
-    //     var aspectRatio = 16 / 9;
-    //     var width = Math.min(mainWindow.width, mainWindow.height * aspectRatio);
-    //     var height = width / aspectRatio;
-    //     return { width: width, height: height };
-    // }
 
     visible: true
-    // width: calculateDimensions().width
-    // height: calculateDimensions().height
     width: 1300
     height: 780
     title: qsTr("Car Dashboard")
@@ -28,7 +22,8 @@ Window {
     MainDashboard {
         id: mainDashboard
         anchors.centerIn: window.contentItem
-        visible: true                           // Initially visible
+
+        visible: true
     }
 
     ClickableImage {
@@ -44,7 +39,7 @@ Window {
             bottomMargin: 10
         }
 
-        visible: true                           // Initially visible
+        visible: true                         // Initially visible
 
         onClicked: {
             console.log("Open Navigation")
@@ -73,10 +68,10 @@ Window {
             leftMargin: 120
         }
 
-        visible: true                           // Initially visible
+        visible: true
 
         onClicked: {
-            console.log("Open Terminal")
+            backend.openTerminal()
         }
     }
 
@@ -94,10 +89,9 @@ Window {
             leftMargin: 120
         }
 
-        visible: true                           // Initially visible
-
+        visible: true
         onClicked: {
-            console.log("Reboot System")
+            backend.rebootSystem()
         }
     }
 
@@ -115,19 +109,43 @@ Window {
             rightMargin: 120
         }
 
-        visible: true                           // Initially visible
+        visible: true // backend.warningMessage !== "OVER_SPEED"// Initially visible
 
         onClicked: {
-            console.log("Open Camera")
+            backend.openCamera()
         }
     }
 
     Message {
         id: messagepage
         anchors.fill: parent
-        visible: true                          // Initially visible
-    }
+        visible: false /*backend.warningMessage === "OVER_SPEED"*/
+        // Listen for changes in backend.warningMessage
+        Connections {
+            target: backend
+            onWarningMessageChanged: {
+                //console.log("Warning message changed to:", backend.warningMessage)
+                if(backend.warningMessage === "OVER_SPEED"){
+                    messagepage.visible = true
 
+                }
+                else if(backend.warningMessage === "Adaptive_Cruise_Activated"){
+                    messagepage.visible = true
+
+                }
+                else if(backend.warningMessage === "Blind_Spot_Detected"){
+                    messagepage.visible = true
+
+                }
+                else{
+                     messagepage.visible = false
+                }
+
+                mainDashboard.visible = !messagepage.visible;
+            }
+        }
+
+    }
     function hideIcons()
     {
         mainDashboard.visible = false       // Hide main Dashboard
@@ -135,5 +153,31 @@ Window {
         terminalIcon.visible = false        // Hide terminal icon
         rebootIcon.visible = false          // Hide reboot icon
         cameraIcon.visible = false          // Hide camera icon
+    }
+
+    // Serial Port Controls
+    Row {
+        anchors {
+            bottom: parent.bottom
+            horizontalCenter: parent.horizontalCenter
+            margins: 20
+        }
+        spacing: 10
+
+        ComboBox {
+            id: portSelector
+            model: backend.availableSerialPorts()
+            width: 200
+        }
+
+        Button {
+            text: "Open Serial"
+            onClicked: backend.openSerialPort(portSelector.currentText)
+        }
+
+        Button {
+            text: "Stop Serial"
+            onClicked: backend.stopSerialPort()
+        }
     }
 }
