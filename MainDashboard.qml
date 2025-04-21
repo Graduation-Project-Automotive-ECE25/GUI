@@ -5,44 +5,42 @@ import "Map"
 
 Item {
     id: mainDashboard
-    width: bck.width
-    height: bck.height
+    width: window.width
+    height: window.height
 
     property int speedValue : 0
     property int rpmValue : 0
     property int right_clicked : 0
+    property bool isFlashing: false
 
     Image {
         id: bck
-
-        anchors.centerIn: mainDashboard
-
+        anchors.fill: parent
         source: "qrc:Images/emptyBG.jpg"
     }
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     Item {
         id: carguage_speed
 
+        width: parent.width * (450/1300)
+        height: width
+
         visible: true
         anchors {
             right: parent.right
-            rightMargin: 20
+            rightMargin: parent.width * (20/1300)
             verticalCenter: parent.verticalCenter
         }
 
         Rectangle {
             id: car_gauge
-            width: 450
+            width: parent.width
             height: width
             radius: width / 2
-            anchors {
-                right: parent.right
-                rightMargin: 20
-                verticalCenter: parent.verticalCenter
-            }
+            anchors.fill: parent
+
             border.color: "white"
-            border.width: 4
+            border.width: 3
             color: "transparent"
             Canvas{
                 id: myCanvas3
@@ -59,8 +57,8 @@ Item {
                     // Define center and radius for lines
                     var centerX = myCanvas3.width / 2;
                     var centerY = myCanvas3.height / 2;
-                    var outerRadius = 205;  // Outer radius for the end of the lines
-                    var innerRadius = 175;  // Inner radius for the start of the lines
+                    var outerRadius = parent.radius * (205/225);  // Outer radius for the end of the lines
+                    var innerRadius = parent.radius * (175/225);  // Inner radius for the start of the lines
                     var numMarkers = 12;    // Number of markers for 0 to 120
 
                     for (var i = 0; i <= numMarkers; i++) {
@@ -96,20 +94,15 @@ Item {
                     var atx = myCanvas.getContext("2d");
                     ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
 
-
                     ctx.strokeStyle = "white";
                     ctx.lineWidth = 2;
 
                     // Define center and radius for lines
                     var centerX = myCanvas.width / 2;
                     var centerY = myCanvas.height / 2;
-                    var outerRadius = 205;  // Outer radius for the end of the lines
-                    var innerRadius = 190;  // Inner radius for the start of the lines
+                    var outerRadius = parent.radius * (205/225);  // Outer radius for the end of the lines
+                    var innerRadius = parent.radius * (190/225);  // Inner radius for the start of the lines
                     var numMarkers = 120;    // Number of markers for 0 to 120
-
-                    // Draw each marker line around a 180-degree arc
-                    var smallInnerRadius = innerRadius + 15;  // Inner radius for small slits
-                    var smallOuterRadius = outerRadius - 15;
 
                     for (var i = 0; i <= numMarkers; i++) {
                         var angle = (i / numMarkers) * Math.PI * 1.6; // Divide a 180-degree arc
@@ -134,7 +127,7 @@ Item {
                     ctx.beginPath();
                     ctx.moveTo(width / 2 , height / 2 );
                     var needleAngle = Math.PI / 2 + (backend.speedValue / 120) * Math.PI * 1.6;
-                    var needleLength = 182;
+                    var needleLength = parent.width * (160/450);
                     ctx.lineTo(width / 2 + needleLength * Math.cos(needleAngle),
                                height / 2 + needleLength * Math.sin(needleAngle));
                     ctx.lineWidth = 5;
@@ -152,97 +145,86 @@ Item {
                 model: 7  // Labels from 0 to 120 at 10 km/h intervals
                 delegate: Text {
                     text: (index * 20).toString()
-                    font.pixelSize: 25
+                    font.pixelSize: parent.width/18
                     font.bold: true
                     color: (index < 5) ? "white" : "red"
-                    x: parent.width / 2 + 150 * Math.cos(Math.PI / 2 + index * Math.PI / 6 * 1.6) - width / 2
-                    y: parent.height / 2 + 150 * Math.sin(Math.PI / 2 + index * Math.PI / 6 * 1.6) - height / 2
+                    x: parent.width / 2 + (parent.width * (150/450)) * Math.cos(Math.PI / 2 + index * Math.PI / 6 * 1.6) - width / 2
+                    y: parent.height / 2 + (parent.height * (150/450)) * Math.sin(Math.PI / 2 + index * Math.PI / 6 * 1.6) - height / 2
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
             }
 
             Rectangle {
-                width: 60
-                height: 60
+                width: parent.width * (60/450)
+                height: width
                 radius: width / 2
-                anchors.centerIn: car_gauge
+                anchors.centerIn: parent
                 color: car_gauge.color
-
                 visible: true
                 border.color: "grey"
                 border.width : 2
-            }
 
-            Rectangle {
-                width: 35
-                height: 35
-                radius: width / 2
-                anchors.centerIn: car_gauge
-                color: "red"
-                visible: true
-                border.color: car_gauge.color
-                border.width : 2
+                Rectangle {
+                    width: parent.width * (30/60)
+                    height: width
+                    radius: width / 2
+                    anchors.centerIn: parent
+                    color: "red"
+                    visible: true
+                    border.color: car_gauge.color
+                    border.width : 2
+                }
             }
         }
 
         //////////////////////////////////////////////////////////////////////////////// will be removed
         Rectangle {
             id: speed_incrementer
-            width: 80
-            height: 50
+            width: parent.width * (80/450)
+            height: parent.height * (50/450)
             border.color: "black"
             border.width: 1
             color: car_gauge.color
             anchors {
                 right: car_gauge.right
-                rightMargin: 95
+                rightMargin: parent.width * (95/450)
                 bottom: parent.bottom
-                bottomMargin: 110
+                bottomMargin: parent.height * (110/450)
             }
             Text {
                 id: speedText
                 anchors.centerIn: parent
                 text: backend.speedValue.toString()
                 color: "blue"
-                font.pixelSize: 60
+                font.pixelSize: parent.width/1.5
                 font.bold: true
             }
         }
-
-            // Text {
-            //     id: speedText
-            //     anchors.centerIn: parent
-            //     text: speedValue.toString()
-            //     color: "white"
-            //     font.pixelSize: 15
-            // }
-        }
-        /////////////////////////////////////////////////////////////////////////////////////////
-
-
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////
     Item {
         id: carguage_rpm
+
+        width: parent.width * (450/1300)
+        height: width
 
         visible: true
         anchors {
             left: parent.left
-            leftMargin: 20
+            leftMargin: parent.width * (20/1300)
             verticalCenter: parent.verticalCenter
         }
 
         Rectangle {
             id: car_gauge_rpm
-            width: 450
+            width: parent.width
             height: width
             radius: width / 2
-            anchors {
-                left: parent.left
-                leftMargin: 20
-                verticalCenter: parent.verticalCenter
-            }
+            anchors.fill: parent
+
             border.color: "white"
-            border.width: 4
+            border.width: 3
             color: "transparent"
             Canvas{
                 id: myCanvas3_rpm
@@ -259,8 +241,8 @@ Item {
                     // Define center and radius for lines
                     var centerX = myCanvas3_rpm.width / 2;
                     var centerY = myCanvas3_rpm.height / 2;
-                    var outerRadius = 205;  // Outer radius for the end of the lines
-                    var innerRadius = 175;  // Inner radius for the start of the lines
+                    var outerRadius = parent.radius * (205/225);  // Outer radius for the end of the lines
+                    var innerRadius = parent.radius * (175/225);  // Inner radius for the start of the lines
                     var numMarkers = 14;    // Number of markers for 0 to 14
 
                     for (var i = 0; i <= numMarkers; i++) {
@@ -303,13 +285,9 @@ Item {
                     // Define center and radius for lines
                     var centerX = myCanvas_rpm.width / 2;
                     var centerY = myCanvas_rpm.height / 2;
-                    var outerRadius = 205;  // Outer radius for the end of the lines
-                    var innerRadius = 190;  // Inner radius for the start of the lines
+                    var outerRadius = parent.radius * (205/225);  // Outer radius for the end of the lines
+                    var innerRadius = parent.radius * (190/225);  // Inner radius for the start of the lines
                     var numMarkers = 28;    // Number of markers for 0 to 28
-
-                    // Draw each marker line around a 180-degree arc
-                    var smallInnerRadius = innerRadius + 15;  // Inner radius for small slits
-                    var smallOuterRadius = outerRadius - 15;
 
                     for (var i = 0; i <= numMarkers; i++) {
                         var angle = (i / numMarkers) * Math.PI * 1.6; // Divide a 180-degree arc
@@ -334,7 +312,7 @@ Item {
                     ctx.beginPath();
                     ctx.moveTo(width / 2 , height / 2 );
                     var needleAngle = Math.PI / 2 + (rpmValue / 28) * Math.PI * 1.6; // Update angle based on RPM
-                    var needleLength = 162;
+                    var needleLength = parent.width * (160/450);
                     ctx.lineTo(width / 2 + needleLength * Math.cos(needleAngle),
                                height / 2 + needleLength * Math.sin(needleAngle));
                     ctx.lineWidth = 5;
@@ -352,45 +330,44 @@ Item {
                 model: 8  // Labels from 0 to 7 RPM
                 delegate: Text {
                     text: index.toString()
-                    font.pixelSize: 28
+                    font.pixelSize: parent.width/17
                     font.bold: true
                     color: (index < 6) ? "white" : "red"
-                    x: parent.width / 2 + 150 * Math.cos(Math.PI / 2 + index * Math.PI / 7 * 1.6) - width / 2
-                    y: parent.height / 2 + 150 * Math.sin(Math.PI / 2 + index * Math.PI / 7 * 1.6) - height / 2
+                    x: parent.width / 2 + (parent.width * (150/450)) * Math.cos(Math.PI / 2 + index * Math.PI / 7 * 1.6) - width / 2
+                    y: parent.height / 2 + (parent.width * (150/450)) * Math.sin(Math.PI / 2 + index * Math.PI / 7 * 1.6) - height / 2
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }
             }
 
             Rectangle {
-                width: 60
-                height: 60
+                width: parent.width * (60/450)
+                height: width
                 radius: width / 2
-                anchors.centerIn: car_gauge_rpm
+                anchors.centerIn: parent
                 color: car_gauge_rpm.color
-
                 visible: true
                 border.color: "grey"
                 border.width : 2
-            }
 
-            Rectangle {
-                width: 35
-                height: 35
-                radius: width / 2
-                anchors.centerIn: car_gauge_rpm
-                color: "red"
-                visible: true
-                border.color: car_gauge_rpm.color
-                border.width : 2
-            }
+                Rectangle {
+                    width: parent.width * (30/60)
+                    height: width
+                    radius: width / 2
+                    anchors.centerIn: parent
+                    color: "red"
+                    visible: true
+                    border.color: car_gauge_rpm.color
+                    border.width : 2
+                }
+            }  
         }
 
         //////////////////////////////////////////////////////////////////////////////// will be removed
         Rectangle {
             id:speed_incrementer_rpm
-            width: 40
-            height: 40
+            width: parent.width * (40/450)
+            height: width
             color: "transparent"
             x: parent.width / 2 - width / 2
             y: parent.height / 2 - height / 2
@@ -404,14 +381,6 @@ Item {
                         rpmValue = 0;
                 }
             }
-
-            // Text {
-            //     id: speedText
-            //     anchors.centerIn: parent
-            //     text: speedValue.toString()
-            //     color: "white"
-            //     font.pixelSize: 15
-            // }
         }
         /////////////////////////////////////////////////////////////////////////////////////////
     }
@@ -419,12 +388,12 @@ Item {
     Item {
         id: turnsignals
 
-        width: 370
-        height: 70
+        width: parent.width * (500/1300)
+        height: parent.height * (100/780)
 
         anchors {
             top: parent.top
-            topMargin: 100
+            topMargin: parent.height * (50/780)
             horizontalCenter: parent.horizontalCenter
         }
 
@@ -433,8 +402,8 @@ Item {
             anchors.fill: parent
 
             MouseArea {
-                width: 70
-                height: 70
+                width: turnsignals.width * (100/500)
+                height: width
                 anchors.right: parent.right
 
                 hoverEnabled: true
@@ -445,23 +414,46 @@ Item {
                 //     }
 
                 //     else {
+                //         flashingTimerR.start()
                 //         turnsignalstimer.start()
                 //         turnRight.visible = true
                 //         console.log("Turn Right")
                 //     }
                 // }
-                AnimatedImage {
+                // onDoubleClicked: {
+                //     if (!isFlashing) {
+                //         // Start flashing both signals
+                //         flashingTimerL.start()
+                //         flashingTimerR.start()
+                //         turnLeft.visible = true
+                //         turnRight.visible = true
+                //         turnsignalstimer.start()
+                //         isFlashing = true
+                //         console.log("Waiting")
+                //     }
+                //     else {
+                //         // Stop flashing
+                //         flashingTimerL.stop()
+                //         flashingTimerR.stop()
+                //         turnLeft.visible = false
+                //         turnRight.visible = false
+                //         turnsignalstimer.stop()
+                //         isFlashing = false
+                //     }
+                // }
+                Image {
                     id: turnRight
-                    source: "qrc:Images/rightArrow.gif"
+                    source: "qrc:/Images/right.png"
                     anchors.fill: parent
                     visible: false
                 }
             }
 
             MouseArea {
-                width: 70
-                height: 70
+                width: turnsignals.width * (70/400)
+                height: width
                 anchors.left: parent.left
+
                 hoverEnabled: true
                 cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor
                 // onClicked: {
@@ -469,29 +461,69 @@ Item {
                 //         turnLeft.visible = false
                 //     }
                 //     else {
+                //         flashingTimerL.start()
                 //         turnsignalstimer.start()
                 //         turnLeft.visible = true
                 //         console.log("Turn Left")
                 //     }
                 // }
-
-                AnimatedImage {
+                // onDoubleClicked: {
+                //     if (!isFlashing) {
+                //         // Start flashing both signals
+                //         flashingTimerL.start()
+                //         flashingTimerR.start()
+                //         turnLeft.visible = true
+                //         turnRight.visible = true
+                //         turnsignalstimer.start()
+                //         isFlashing = true
+                //         console.log("Waiting")
+                //     }
+                //     else {
+                //         // Stop flashing
+                //         flashingTimerL.stop()
+                //         flashingTimerR.stop()
+                //         turnLeft.visible = false
+                //         turnRight.visible = false
+                //         turnsignalstimer.stop()
+                //         isFlashing = false
+                //     }
+                // }
+                Image {
                     id: turnLeft
-                    source: "qrc:Images/leftArrow.gif"
+                    source: "qrc:/Images/left.png"
                     anchors.fill: parent
                     visible: false
                 }
             }
 
             Timer {
-                id: turnsignalstimer
-                interval: 10000; running: true; repeat:false
+                id: flashingTimerR
+                interval: 500; running: false; repeat: true
                 onTriggered:{
+                    turnRight.visible = !turnRight.visible
+                }
+            }
+
+            Timer {
+                id: flashingTimerL
+                interval: 500; running: false; repeat: true
+                onTriggered:{
+                    turnLeft.visible = !turnLeft.visible
+                }
+            }
+
+            Timer {
+                id: turnsignalstimer
+                interval: 10000; running: false; repeat:false
+                onTriggered:{
+                    flashingTimerR.stop()
+                    flashingTimerL.stop()
                     turnRight.visible = false
                     turnLeft.visible = false
                 }
             }
         }
+
         Connections {
             target: backend
             onSignMessageChanged:{
@@ -500,9 +532,10 @@ Item {
                         turnRight.visible = false
                     }
                     else {
-                    turnsignalstimer.start()
-                    turnRight.visible = true
-                    console.log("Turn Right")
+                        flashingTimerR.start()
+                        turnsignalstimer.start()
+                        turnRight.visible = true
+                        console.log("Turn Right")
                     }
                 }
                 else if(backend.signMessage === "left"){
@@ -510,97 +543,121 @@ Item {
                         turnLeft.visible = false
                     }
                     else {
-                    turnsignalstimer.start()
-                    turnLeft.visible = true
-                    console.log("Turn left")
+                        flashingTimerL.start()
+                        turnsignalstimer.start()
+                        turnLeft.visible = true
+                        console.log("Turn left")
+                    }
+                }
+                else if(backend.signMessage === "wait"){
+                    if (!isFlashing) {
+                        // Start flashing both signals
+                        flashingTimerL.start()
+                        flashingTimerR.start()
+                        turnLeft.visible = true
+                        turnRight.visible = true
+                        turnsignalstimer.start()
+                        isFlashing = true
+                        console.log("Waiting")
+                    }
+                    else {
+                        // Stop flashing
+                        flashingTimerL.stop()
+                        flashingTimerR.stop()
+                        turnLeft.visible = false
+                        turnRight.visible = false
+                        turnsignalstimer.stop()
+                        isFlashing = false
                     }
                 }
             }
-
         }
     }
 
     Item {
         id: movingcar
-        width: 300
-        height: 200
+        width: parent.width * (300/1300)
+        height: parent.height * (480/780)
 
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
-            bottomMargin: 190
+            bottomMargin: parent.height * (150/780)
         }
 
         Image {
             id: car
             source: "qrc:/Images/Model_3.svg"
-            width: 250
-            height: 180
-            anchors.centerIn: parent.Center
-            x: x+25
+            width: parent.width * (250/300)
+            height: parent.height * (180/480)
+            anchors {
+                horizontalCenter: parent.horizontalCenter
+                bottom: parent.bottom
+                bottomMargin: parent.height * (50/480)
+            }
         }
 
-        Row {
-            id: row1r
-            visible: true
+        Item {
+            id: rowR
             anchors {
-                centerIn: car.right
+                verticalCenterOffset: -1 * parent.height/2
+                horizontalCenterOffset: parent.width/9
+                centerIn: parent
             }
-            spacing: 15
-            x: x+50
-            y: y+20
             rotation: 80
-            Repeater {
-                model: 12 // or any number of dots you want
-                Rectangle {width: 15; height: 3; color: "white"}
+            Row {
+                id: row1r
+                visible: true
+                x: x - movingcar.height/48
+                spacing: movingcar.height/24
+
+                Repeater {
+                    model: 12 // or any number of dots you want
+                    Rectangle {width: movingcar.height/24; height: 2; color: "white"}
+                }
+            }
+            Row {
+                id: row2r
+                visible: false
+                x: x + movingcar.height/48
+                spacing: movingcar.height/24
+
+                Repeater {
+                    model: 12 // or any number of dots you want
+                    Rectangle {width: movingcar.height/24; height: 2; color: "white"}
+                }
             }
         }
 
-        Row {
-            id: row2r
-            visible: false
+        Item {
+            id: rowL
             anchors {
-                centerIn: car.right
+                verticalCenterOffset: -1 * parent.height/2
+                horizontalCenterOffset: -1 * parent.width/9
+                centerIn: parent
             }
-            spacing: 15
-            x: x+53
-            y: y+35
-            rotation: 80
-            Repeater {
-                model: 12 // or any number of dots you want
-                Rectangle {width: 15; height: 3; color: "white"}
-            }
-        }
+            rotation: 100
+            Row {
+                id: row1l
+                visible: true
+                x: x - movingcar.height/48
+                spacing: movingcar.height/24
 
-        Row {
-            id: row1l
-            visible: true
-            anchors {
-                centerIn: car.left
+                Repeater {
+                    model: 12 // or any number of dots you want
+                    Rectangle {width: movingcar.height/24; height: 2; color: "white"}
+                }
             }
-            spacing: 15
-            x: x-95
-            y: y+20
-            rotation: -80
-            Repeater {
-                model: 12 // or any number of dots you want
-                Rectangle {width: 15; height: 3; color: "white"}
-            }
-        }
+            Row {
+                id: row2l
+                visible: true
+                x: x + movingcar.height/48
+                spacing: movingcar.height/24
 
-        Row {
-            id: row2l
-            visible: false
-            anchors {
-                centerIn: car.left
-            }
-            spacing: 15
-            x: x-98
-            y: y+35
-            rotation: -80
-            Repeater {
-                model: 12 // or any number of dots you want
-                Rectangle {width: 15; height: 3; color: "white"}
+                Repeater {
+                    model: 12 // or any number of dots you want
+                    Rectangle {width: movingcar.height/24; height: 2; color: "white"}
+                }
             }
         }
 
@@ -620,9 +677,11 @@ Item {
         id: headlights
         source: "qrc:/Images/headlights.svg"
 
+        width: parent.width * (48/1300)
+        height: width
         anchors {
             top: parent.top
-            topMargin: 110
+            topMargin: parent.height * (70/780)
             horizontalCenter: parent.horizontalCenter
         }
     }
@@ -631,12 +690,13 @@ Item {
         id: heater
         source: "qrc:/Images/heater.svg"
 
+        width: parent.width * (48/1300)
+        height: width
         anchors {
             top: parent.top
-            topMargin: 110
+            topMargin: parent.height * (75/780)
             left: headlights.right
-            leftMargin: 10
-
+            leftMargin: parent.width * (30/1300)
         }
     }
 
@@ -644,19 +704,20 @@ Item {
         id: lock
         source: "qrc:/Images/lock.svg"
 
+        width: parent.width * (48/1300)
+        height: width
         anchors {
             top: parent.top
-            topMargin: 110
+            topMargin: parent.height * (70/780)
             right: headlights.left
-            rightMargin: 10
-
+            rightMargin: parent.width * (30/1300)
         }
     }
 
     Item {
         id: bottombar
-        width: 1300
-        height: 100
+        width: parent.width
+        height: parent.height * (120/780)
         anchors.bottom: parent.bottom
 
         Canvas {
@@ -669,11 +730,11 @@ Item {
                 ctx.clearRect(0, 0, bar.width, bar.height);
 
                 ctx.strokeStyle = "white";
-                ctx.lineWidth = 7;
+                ctx.lineWidth = 5;
 
-                var startX = 50;
+                var startX = parent.width * (50/1300);
                 var startY = 0;
-                var endX = bar.width - 50;
+                var endX = bar.width - startX;
                 var endY = 0;
 
                 // Draw the line

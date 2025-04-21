@@ -38,5 +38,10 @@
         <file>Images/whiteMapIcon.png</file>
         <file>UserDefined_functions/ClickableImage.qml</file>
         <file>Images/cameraicon.png</file>
+        <file>Images/left.png</file>
+        <file>Images/right.png</file>
+        <file>Images/siri.gif</file>
+        <file>UserDefined_functions/ClickableAnimatedImage.qml</file>
+        <file>Images/voiceInfo.png</file>
     </qresource>
 </RCC>

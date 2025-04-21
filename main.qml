@@ -11,10 +11,9 @@ import "Message_screen"
 Window {
     id: window
 
-
     visible: true
-    width: 1300
-    height: 780
+    width: 800                      // Based on 1300
+    height: 480                     // Based on 780
     title: qsTr("Car Dashboard")
 
     color:"#F1F1F1"
@@ -30,16 +29,16 @@ Window {
         id: mapIcon
         source: "qrc:/Images/whiteMapIcon.png"
 
-        width: 80
-        height: 80
+        width: parent.width * (80/1300)
+        height: width
 
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
-            bottomMargin: 10
+            bottomMargin: parent.height * (18/780)
         }
 
-        visible: true                         // Initially visible
+        visible: true                           // Initially visible
 
         onClicked: {
             console.log("Open Navigation")
@@ -58,14 +57,14 @@ Window {
         id: terminalIcon
         source: "qrc:/Images/terminal.png"
 
-        width: 60
-        height: 60
+        width: parent.width * (60/1300)
+        height: width
 
         anchors {
             bottom: parent.bottom
-            bottomMargin: 17
+            bottomMargin: parent.height * (25/780)
             left: mapIcon.right
-            leftMargin: 120
+            leftMargin: parent.width * (120/1300)
         }
 
         visible: true
@@ -79,14 +78,14 @@ Window {
         id: rebootIcon
         source: "qrc:/Images/reboot.png"
 
-        width: 80
-        height: 80
+        width: parent.width * (80/1300)
+        height: width
 
         anchors {
             bottom: parent.bottom
-            bottomMargin: 9
+            bottomMargin: parent.height * (17/780)
             left: terminalIcon.right
-            leftMargin: 120
+            leftMargin: parent.width * (120/1300)
         }
 
         visible: true
@@ -99,41 +98,62 @@ Window {
         id: cameraIcon
         source: "qrc:/Images/cameraicon.png"
 
-        width: 90
-        height: 60
+        width: parent.width * (90/1300)
+        height: parent.height * (60/780)
 
         anchors {
             bottom: parent.bottom
-            bottomMargin: 15
+            bottomMargin: parent.height * (23/780)
             right: mapIcon.left
-            rightMargin: 120
+            rightMargin: parent.width * (120/1300)
         }
 
-        visible: true // backend.warningMessage !== "OVER_SPEED"// Initially visible
+        visible: true
 
         onClicked: {
             backend.openCamera()
         }
     }
 
+    ClickableImage {
+        id: projectInfo
+        source: "qrc:/Images/voiceInfo.png"
+
+        width: parent.width * (80/1300)
+        height: width
+
+        anchors {
+            bottom: parent.bottom
+            bottomMargin: parent.height * (20/780)
+            right: cameraIcon.left
+            rightMargin: parent.width * (120/1300)
+        }
+
+        visible: true
+
+        onClicked: {
+            backend.projectInfo()
+        }
+    }
+
     Message {
         id: messagepage
         anchors.fill: parent
-        visible: false /*backend.warningMessage === "OVER_SPEED"*/
+        visible: false
         // Listen for changes in backend.warningMessage
         Connections {
             target: backend
             onWarningMessageChanged: {
                 //console.log("Warning message changed to:", backend.warningMessage)
-                if(backend.warningMessage === "OVER_SPEED"){
+                if(backend.warningMessage === "WARNING\nOVER SPEED"){
                     messagepage.visible = true
 
                 }
-                else if(backend.warningMessage === "Adaptive_Cruise_Activated"){
+                else if(backend.warningMessage === "WARNING\nAdaptive Cruise Activated"){
                     messagepage.visible = true
 
                 }
-                else if(backend.warningMessage === "Blind_Spot_Detected"){
+                else if(backend.warningMessage === "WARNING\nBlind Spot Detected"){
                     messagepage.visible = true
 
                 }
@@ -144,25 +164,19 @@ Window {
                 mainDashboard.visible = !messagepage.visible;
             }
         }
-
-    }
-    function hideIcons()
-    {
-        mainDashboard.visible = false       // Hide main Dashboard
-        mapIcon.visible = false             // Hide map icon
-        terminalIcon.visible = false        // Hide terminal icon
-        rebootIcon.visible = false          // Hide reboot icon
-        cameraIcon.visible = false          // Hide camera icon
     }
 
     // Serial Port Controls
     Row {
+        id: serialControls
+        visible: true
+
         anchors {
-            bottom: parent.bottom
+            top: parent.top
             horizontalCenter: parent.horizontalCenter
-            margins: 20
+            margins: parent.height * (10/780)
         }
-        spacing: 10
+        spacing: parent.width * (10/1300)
 
         ComboBox {
             id: portSelector
@@ -180,4 +194,15 @@ Window {
             onClicked: backend.stopSerialPort()
         }
     }
+
+    function hideIcons()
+    {
+        mainDashboard.visible = false       // Hide main Dashboard
+        mapIcon.visible = false             // Hide map icon
+        terminalIcon.visible = false        // Hide terminal icon
+        rebootIcon.visible = false          // Hide reboot icon
+        cameraIcon.visible = false          // Hide camera icon
+        serialControls.visible = false      // Hide serial port controls
+    }
 }
+

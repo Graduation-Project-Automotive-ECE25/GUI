@@ -6,13 +6,13 @@ import "../UserDefined_functions"
 
 Item {
     id: messagepage
-    width: 1300
-    height: 780
+    width: window.width
+    height: window.height
     anchors.centerIn: window.contentItem
 
     Image {
         id: message_bck
-        anchors.centerIn: parent.Center
+        anchors.fill: parent
         source: "qrc:Images/emptyBG.jpg"
     }
     ColorOverlay {
@@ -23,62 +23,48 @@ Item {
     Image {
         id: border
         source: "qrc:Images/rectangle.png"
-        anchors.centerIn: parent.Center
-    }
 
-    Text {
-        text: qsTr(backend.warningMessage)
-        // messagepage.visible: backend.warningMessage
-        font.family: "Helvetica"
-        font.pointSize: 40
-        font.bold: true
-        color: "blue"
-        style: Text.Outline
-        styleColor: "#fefe00"
-
-        width: 340
-        horizontalAlignment: Text.AlignHCenter
-        anchors {
-            horizontalCenter : border.horizontalCenter
-            verticalCenter : border.verticalCenter
-
-        }
-
+        width: parent.width * (2500/1300)
+        height: parent.height * (1500/780)
+        anchors.centerIn: parent
+        // anchors.fill: parent
     }
 
     Rectangle {
-        width: 340
-        height: 80
+        width: parent.width * (690/1300)
+        height: parent.height * (325/780)
+        radius: 35
         color: "transparent"
         anchors {
-            horizontalCenter: parent.horizontalCenter
-            top: parent.top
-            topMargin: 220
+            centerIn: parent
+            horizontalCenterOffset: 10
+            verticalCenterOffset: 4
         }
 
         Text {
-            text: qsTr("Warning")
+            // text: qsTr("Warning\nKeep your hands\non steering Wheel")
+            text: qsTr(backend.warningMessage)
+            // messagepage.visible: backend.warningMessage
             font.family: "Helvetica"
-            font.pointSize: 40
+            font.pointSize: messagepage.width * (25/800)
             font.bold: true
             color: "yellow"
-            style: Text.Outline
-            styleColor: "#fefe00"
 
-            width: 340
             horizontalAlignment: Text.AlignHCenter
-            anchors.centerIn: parent.Center
+            anchors.centerIn: parent
         }
     }
 
     ClickableImage {
         id: ok_bottun
         source: "qrc:Images/ok-64.png"
+        width: parent.width * (70/1300)
+        height: width
 
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
-            bottomMargin: 200
+            bottomMargin: parent.width * (40/780)
         }
 
         visible: true                           // Initially visible
@@ -89,6 +75,4 @@ Item {
             //backend.clearWarningMessage()
         }
     }
-
-
 }

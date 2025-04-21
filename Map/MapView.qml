@@ -63,6 +63,15 @@ Rectangle {
                 width: 40
                 height: 40
             }
+            Connections {
+                target: backend
+                onLongitudeChanged:{
+                    coordinate: QtPositioning.coordinate(backend.latitude , backend.longitude)
+                }
+                onLaitudeChanged:{
+                    coordinate: QtPositioning.coordinate(backend.latitude , backend.longitude)
+                }
+            }
         }
 
         PinchHandler {
@@ -113,11 +122,14 @@ Rectangle {
         id: backArrow
         source: "qrc:Images/backArrow.png"
 
+        width: parent.width * (50/1300)
+        height: width
+
         anchors {
             left: parent.left
-            leftMargin: 20
+            leftMargin: parent.width * (20/1300)
             top: parent.top
-            topMargin: 25
+            topMargin: parent.height * (25/780)
         }
 
         antialiasing: true
@@ -134,9 +146,9 @@ Rectangle {
 
         anchors {
             left: backArrow.right
-            leftMargin: 20
+            leftMargin: parent.width * (20/1300)
             top: parent.top
-            topMargin: 25
+            topMargin: parent.height * (25/780)
         }
 
     }
@@ -148,5 +160,6 @@ Rectangle {
         terminalIcon.visible = true        // show terminal icon
         rebootIcon.visible = true          // show reboot icon
         cameraIcon.visible = true          // show camera icon
+        serialControls.visible = true      // show serial port controls
     }
 }

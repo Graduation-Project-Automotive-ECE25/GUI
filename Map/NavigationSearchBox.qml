@@ -5,7 +5,7 @@ Rectangle {
     color : "#fbfbfb"
     radius : 7
     width: parent.width / 4
-    height: 50
+    height: parent.height * (50/780)
 
     border {
         color: "#d9d9d9"
