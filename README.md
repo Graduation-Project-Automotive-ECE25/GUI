@@ -1,4 +1,4 @@
-Graduation project GUI (Qt Creator) subteam repository
+**Graduation project GUI (Qt Creator) subteam repository**
 
 This QML_based project produces a responsive GUI that supports any screen size and provides several features
 involving speed guage, RPM guage, responsive turn signals, and multiple interactive buttons
