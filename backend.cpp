@@ -86,7 +86,7 @@ void Backend::openSerialPort(const QString &port_name) {
     }
 
     serial->setPortName(port_name);
-    serial->setBaudRate(QSerialPort::Baud115200);
+    serial->setBaudRate(QSerialPort::Baud9600);
     serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);
     serial->setStopBits(QSerialPort::OneStop);
@@ -194,7 +194,7 @@ void Backend::rebootSystem() {
 void Backend::openCamera() {
     // QProcess::startDetached("cheese"); // Linux
     QString scriptDir = "/usr/bin";
-    QString scriptPath = scriptDir + "/lane-detection.py";
+    QString scriptPath = scriptDir + "/lane-detection";
     QString program = "python3";
     QStringList arguments;
     arguments << scriptPath;
