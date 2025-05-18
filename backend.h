@@ -10,20 +10,26 @@ class Backend : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int speedValue READ speedValue WRITE setSpeedValue NOTIFY speedValueChanged FINAL)
+    Q_PROPERTY(int rpmValue READ rpmValue WRITE setRPMValue NOTIFY rpmValueChanged FINAL)
     Q_PROPERTY(QString warningMessage READ warningMessage WRITE setWarningMessage NOTIFY warningMessageChanged FINAL)
     Q_PROPERTY(QString signMessage READ signMessage WRITE setSignMessage NOTIFY signMessageChanged FINAL)
     Q_PROPERTY(double latitude READ latitude WRITE setLatitudeValue NOTIFY latitudeChanged FINAL)
     Q_PROPERTY(double longitude READ longitude WRITE setLongitudeValue NOTIFY longitudeChanged FINAL)
+    Q_PROPERTY(QString distance READ distance WRITE setDistance NOTIFY distanceChanged FINAL)
 public:
     explicit Backend(QObject *parent = nullptr);
     ~Backend();
     int speedValue() const;
+    int rpmValue() const;
 
     double latitude() const;
     double longitude() const;
 
     QString warningMessage() const;
     QString signMessage() const;
+
+    QString distance() const;
+    void setDistance(const QString &distance);
 
     Q_INVOKABLE void openSerialPort(const QString &port_name);
     Q_INVOKABLE void stopSerialPort();
@@ -36,6 +42,7 @@ public:
     Q_INVOKABLE void clearWarningMessage();
     /***********************MACROS*************************/
     #define SpeedValue        11
+    #define RPMValue          77
     #define BlindSpot         44
     #define TurnSignal        33
     #define AdabtiveCruis     22
@@ -44,17 +51,21 @@ public:
 
 signals:
     void speedValueChanged();
+    void rpmValueChanged();
     void warningMessageChanged();
     void signMessageChanged();
     void latitudeChanged();
     void longitudeChanged();
+    void distanceChanged();
 private slots:
     void readSerialData();
 
 private:
     int m_speedValue;
+    int m_rpmValue;
     QString m_warningMessage;
     QString m_signMessage;
+    QString m_distance;
     int messageCheck;
     double m_latitude;
     double m_longitude;
@@ -62,8 +73,9 @@ private:
 
     void handleRecievedWarningMessage(QStringList receivedList);
     void setSpeedValue(int value);
-    void setLatitudeValue(int value);
-    void setLongitudeValue(int value);
+    void setRPMValue(int value);
+    void setLatitudeValue(double value);
+    void setLongitudeValue(double value);
     void setWarningMessage(const QString &message);
     void setSignMessage(const QString &message);
 };

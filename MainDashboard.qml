@@ -1,7 +1,8 @@
-import QtQuick 2.11
+import QtQuick 2.15
 import Qt5Compat.GraphicalEffects
+import QtQuick.Controls 2.15
+
 import "UserDefined_functions"
-import "Map"
 
 Item {
     id: mainDashboard
@@ -12,6 +13,9 @@ Item {
     property int rpmValue : 0
     property int right_clicked : 0
     property bool isFlashing: false
+    property real dashWidth: movingcar.height / 24
+    property real dashSpacing: movingcar.height / 24
+    property real dashOffset: movingcar.height / 48
 
     Image {
         id: bck
@@ -178,26 +182,27 @@ Item {
             }
         }
 
-        //////////////////////////////////////////////////////////////////////////////// will be removed
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
         Rectangle {
             id: speed_incrementer
             width: parent.width * (80/450)
             height: parent.height * (50/450)
             border.color: "black"
             border.width: 1
+            radius: 10
             color: car_gauge.color
             anchors {
                 right: car_gauge.right
                 rightMargin: parent.width * (95/450)
                 bottom: parent.bottom
-                bottomMargin: parent.height * (110/450)
+                bottomMargin: parent.height * (95/450)
             }
             Text {
                 id: speedText
                 anchors.centerIn: parent
                 text: backend.speedValue.toString()
                 color: "blue"
-                font.pixelSize: parent.width/1.5
+                font.pixelSize: parent.width/1.8
                 font.bold: true
             }
         }
@@ -264,7 +269,7 @@ Item {
                     }
                 }
                 Connections {
-                    target: parent
+                    target: backend
                     onRpmValueChanged: myCanvas3_rpm.requestPaint()
                 }
             }
@@ -311,7 +316,7 @@ Item {
 
                     ctx.beginPath();
                     ctx.moveTo(width / 2 , height / 2 );
-                    var needleAngle = Math.PI / 2 + (rpmValue / 28) * Math.PI * 1.6; // Update angle based on RPM
+                    var needleAngle = Math.PI / 2 + (backend.rpmValue / 28) * Math.PI * 1.6; // Update angle based on RPM
                     var needleLength = parent.width * (160/450);
                     ctx.lineTo(width / 2 + needleLength * Math.cos(needleAngle),
                                height / 2 + needleLength * Math.sin(needleAngle));
@@ -321,7 +326,7 @@ Item {
                 }
 
                 Connections {
-                    target: parent
+                    target: backend
                     onRpmValueChanged: myCanvas_rpm.requestPaint()
                 }
             }
@@ -364,24 +369,24 @@ Item {
         }
 
         //////////////////////////////////////////////////////////////////////////////// will be removed
-        Rectangle {
-            id:speed_incrementer_rpm
-            width: parent.width * (40/450)
-            height: width
-            color: "transparent"
-            x: parent.width / 2 - width / 2
-            y: parent.height / 2 - height / 2
+        // Rectangle {
+        //     id:speed_incrementer_rpm
+        //     width: parent.width * (40/450)
+        //     height: width
+        //     color: "transparent"
+        //     x: parent.width / 2 - width / 2
+        //     y: parent.height / 2 - height / 2
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    rpmValue = rpmValue + 1;  // Limit to max 7
-                    myCanvas_rpm.requestPaint();
-                    if (rpmValue == 29)
-                        rpmValue = 0;
-                }
-            }
-        }
+        //     MouseArea {
+        //         anchors.fill: parent
+        //         onClicked: {
+        //             rpmValue = rpmValue + 1;  // Limit to max 7
+        //             myCanvas_rpm.requestPaint();
+        //             if (rpmValue == 29)
+        //                 rpmValue = 0;
+        //         }
+        //     }
+        // }
         /////////////////////////////////////////////////////////////////////////////////////////
     }
 
@@ -527,7 +532,7 @@ Item {
         Connections {
             target: backend
             onSignMessageChanged:{
-                if(backend.signMessage === "right"){
+                if(backend.signMessage === "r"){
                     if (turnRight.visible) {
                         turnRight.visible = false
                     }
@@ -538,7 +543,7 @@ Item {
                         console.log("Turn Right")
                     }
                 }
-                else if(backend.signMessage === "left"){
+                else if(backend.signMessage === "l"){
                     if (turnLeft.visible) {
                         turnLeft.visible = false
                     }
@@ -549,7 +554,7 @@ Item {
                         console.log("Turn left")
                     }
                 }
-                else if(backend.signMessage === "wait"){
+                else if(backend.signMessage === "w"){
                     if (!isFlashing) {
                         // Start flashing both signals
                         flashingTimerL.start()
@@ -608,23 +613,23 @@ Item {
             Row {
                 id: row1r
                 visible: true
-                x: x - movingcar.height/48
-                spacing: movingcar.height/24
+                x: -dashOffset
+                spacing: dashSpacing
 
                 Repeater {
                     model: 12 // or any number of dots you want
-                    Rectangle {width: movingcar.height/24; height: 2; color: "white"}
+                    Rectangle {width: dashWidth; height: 2; color: "white"}
                 }
             }
             Row {
                 id: row2r
                 visible: false
-                x: x + movingcar.height/48
-                spacing: movingcar.height/24
+                x: dashOffset
+                spacing: dashSpacing
 
                 Repeater {
                     model: 12 // or any number of dots you want
-                    Rectangle {width: movingcar.height/24; height: 2; color: "white"}
+                    Rectangle {width: dashWidth; height: 2; color: "white"}
                 }
             }
         }
@@ -640,23 +645,23 @@ Item {
             Row {
                 id: row1l
                 visible: true
-                x: x - movingcar.height/48
-                spacing: movingcar.height/24
+                x: -dashOffset
+                spacing: dashSpacing
 
                 Repeater {
                     model: 12 // or any number of dots you want
-                    Rectangle {width: movingcar.height/24; height: 2; color: "white"}
+                    Rectangle {width: dashWidth; height: 2; color: "white"}
                 }
             }
             Row {
                 id: row2l
                 visible: true
-                x: x + movingcar.height/48
-                spacing: movingcar.height/24
+                x: dashOffset
+                spacing: dashSpacing
 
                 Repeater {
                     model: 12 // or any number of dots you want
-                    Rectangle {width: movingcar.height/24; height: 2; color: "white"}
+                    Rectangle {width: dashWidth; height: 2; color: "white"}
                 }
             }
         }
@@ -715,33 +720,108 @@ Item {
     }
 
     Item {
-        id: bottombar
+        id: statusBar
         width: parent.width
-        height: parent.height * (120/780)
-        anchors.bottom: parent.bottom
+        height: parent.height * (40/480)
+        anchors.top: parent.top
 
-        Canvas {
-            id: bar
-            anchors.fill: parent
+        // Time on the top left
+        Text {
+            id: timeLabel
+            text: Qt.formatTime(new Date(), "h:mm") // or "hh:mm" for 2-digit hours
+            anchors.left: parent.left
+            anchors.leftMargin: parent.width * (30/800)
+            anchors.verticalCenter: parent.verticalCenter
+            font.pixelSize: 18
+            font.bold: true
+            font.family: "San Francisco"
+            color: "white"
 
-            onPaint: {
-                var ctx = bar.getContext("2d");
-                var atx = bar.getContext("2d");
-                ctx.clearRect(0, 0, bar.width, bar.height);
+            Timer {
+                interval: 1000 // 1 sec
+                running: true
+                repeat: true
+                onTriggered: timeLabel.text = Qt.formatTime(new Date(), "h:mm AP")
+            }
+        }
 
-                ctx.strokeStyle = "white";
-                ctx.lineWidth = 5;
+        // Date on the top right
+        Text {
+            id: dateLabel
+            text: Qt.formatDate(new Date(), "ddd, MMM d") // e.g., "Thu, Apr 24"
+            anchors.right: parent.right
+            anchors.rightMargin: parent.width * (30/800)
+            anchors.verticalCenter: parent.verticalCenter
+            font.pixelSize: 18
+            font.family: "San Francisco"
+            color: "white"
+        }
 
-                var startX = parent.width * (50/1300);
-                var startY = 0;
-                var endX = bar.width - startX;
-                var endY = 0;
+        // Serial Port Controls
+        Row {
+            id: serialControls
+            visible: true
 
-                // Draw the line
-                ctx.beginPath();
-                ctx.moveTo(startX, startY);
-                ctx.lineTo(endX, endY);
-                ctx.stroke();
+            anchors {
+                // top: parent.top
+                horizontalCenter: parent.horizontalCenter
+                verticalCenter: parent.verticalCenter
+                // margins: parent.height * (10 / 780)
+            }
+            spacing: parent.width * (10 / 1300)
+
+            ComboBox {
+                id: portSelector
+                model: backend.availableSerialPorts()
+                width: 200
+                height: 25
+                font.pixelSize: 15
+                padding: 10
+                background: Rectangle {
+                    color: "#2C2C2E" // dark gray
+                    radius: 10
+                    border.color: "#444" // slightly lighter border
+                }
+                contentItem: Text {
+                    text: portSelector.displayText
+                    color: "#FFFFFF"
+                    verticalAlignment: Text.AlignVCenter
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            Button {
+                text: "Open Serial"
+                font.pixelSize: 15
+                height: 25
+                background: Rectangle {
+                    color: "#3A3A3C" // dark neutral
+                    radius: 10
+                    border.color: "#555"
+                }
+                contentItem: Text {
+                    text: qsTr("Open Serial")
+                    color: "#FFFFFF"
+                    anchors.centerIn: parent
+                }
+                onClicked: backend.openSerialPort(portSelector.currentText)
+            }
+
+            Button {
+                text: "Stop Serial"
+                font.pixelSize: 15
+                height: 25
+                background: Rectangle {
+                    color: "#48484A" // slightly different tone
+                    radius: 10
+                    border.color: "#666"
+                }
+                contentItem: Text {
+                    text: qsTr("Stop Serial")
+                    color: "#FFFFFF"
+                    anchors.centerIn: parent
+                }
+                onClicked: backend.stopSerialPort()
             }
         }
     }

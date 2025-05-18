@@ -27,7 +27,6 @@ Item {
         width: parent.width * (2500/1300)
         height: parent.height * (1500/780)
         anchors.centerIn: parent
-        // anchors.fill: parent
     }
 
     Rectangle {

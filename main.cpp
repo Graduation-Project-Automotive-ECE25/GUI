@@ -1,27 +1,33 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QtWebEngineQuick>
 #include "GeoLocationHandler.h"
 #include "backend.h"
-
 
 int main(int argc, char *argv[])
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
+
+
+    QtWebEngineQuick::initialize();
+
     QGuiApplication app(argc, argv);
-    Backend backend;
+
     QQmlApplicationEngine engine;
-    //////////////////////////////////////////////////////////////////////////
-    // Create GeoLocationHandler instance
+
+    // Register and connect backend
+    Backend backend;
+    engine.rootContext()->setContextProperty("backend", &backend);
+
+    // Register geolocation handler
     GeoLocationHandler geoHandler;
     engine.rootContext()->setContextProperty("geoHandler", &geoHandler);
-    //////////////////////////////////////////////////////////////////////////
-    // Register the SerialPort wrapper for QML
-    qmlRegisterType<Backend>("com.example.serial", 1, 0, "SerialPort");
-    //////////////////////////////////////////////////////////////////////////
 
+    // Register custom QML type if needed
+    qmlRegisterType<Backend>("com.example.serial", 1, 0, "SerialPort");
 
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(
@@ -34,10 +40,6 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection);
 
-    // Set Backend as a singleton in QML
-    engine.rootContext()->setContextProperty("backend", &backend);
-
-    engine.loadFromModule("qt6_serial_data", "Main");
     engine.load(url);
 
     return app.exec();

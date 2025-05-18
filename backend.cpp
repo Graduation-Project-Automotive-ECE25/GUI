@@ -13,7 +13,13 @@ Backend::~Backend() {
         serial->close();
     }
 }
-
+QString Backend::distance() const { return m_distance; }
+void Backend::setDistance(const QString &distance) {
+    if (m_distance != distance) {
+        m_distance = distance;
+        emit distanceChanged();
+    }
+}
 // Returns a list of available serial ports on the system.
 QStringList Backend::availableSerialPorts() {
     QStringList ports;
@@ -23,8 +29,9 @@ QStringList Backend::availableSerialPorts() {
     return ports;
 }
 
-// Getter methods for speed, latitude, longitude, and warning messages.
+// Getter methods for speed, RPM, latitude, longitude, and warning messages.
 int Backend::speedValue() const { return m_speedValue; }
+int Backend::rpmValue() const { return m_rpmValue; }
 double Backend::latitude() const { return m_latitude; }
 double Backend::longitude() const { return m_longitude; }
 QString Backend::warningMessage() const { return m_warningMessage; }
@@ -37,12 +44,23 @@ void Backend::setSpeedValue(int value) {
             value = 120;
         }
         m_speedValue = value;
-        emit speedValueChanged();
+        emit speedValueChanged();//give signal to GUI to respond for it
+    }
+}
+
+// Sets RPM value and emits signal if the value changes. Limits RPM to 7.
+void Backend::setRPMValue(int value) {
+    if (m_rpmValue != value) {
+        if(value > 7){
+            value = 7;
+        }
+        m_rpmValue = value;
+        emit rpmValueChanged();//give signal to GUI to respond for it
     }
 }
 
 // Sets latitude and emits a change signal.
-void Backend::setLatitudeValue(int value) {
+void Backend::setLatitudeValue(double value) {
     if (m_latitude != value) {
         m_latitude = value;
         emit latitudeChanged();
@@ -50,7 +68,7 @@ void Backend::setLatitudeValue(int value) {
 }
 
 // Sets longitude and emits a change signal.
-void Backend::setLongitudeValue(int value) {
+void Backend::setLongitudeValue(double value) {
     if (m_longitude != value) {
         m_longitude = value;
         emit longitudeChanged();
@@ -145,7 +163,7 @@ void Backend::handleRecievedWarningMessage(QStringList receivedList) {
 
         if (code == "v") { // Speed warning
             speedStr = receivedList.value(1);
-            speed = speedStr.toInt(&ok);
+            speed = speedStr.toInt(&ok) + 15;
             if (ok) {
                 setSpeedValue(speed);
             }
@@ -162,7 +180,7 @@ void Backend::handleRecievedWarningMessage(QStringList receivedList) {
             messageCheck = 44;
             setWarningMessage("WARNING\nBlind Spot Detected");
         }
-        else if((code == "r") || (code == "l")){ // Traffic sign detection
+        else if((code == "r") || (code == "l")||(code == "w")){ // Traffic sign detection
             setSignMessage(code);
         }
         else if(code == "x"){ // GPS Latitude data

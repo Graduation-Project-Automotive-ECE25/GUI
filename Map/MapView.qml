@@ -2,119 +2,78 @@ import QtQuick 2.15
 import QtLocation 5.11
 import QtLocation 6.8
 import QtPositioning 5.11
+import QtWebEngine 1.9
 
 import "../UserDefined_functions"
 
-
 Rectangle {
 
+    property string calculatedDistance: ""
     property var uiConfig: {
         "fontSize": 14,
         "fontBold": false,
         "fontColor": "black",
         "spacingBetweenTopBarElements": 15
     }
+    Rectangle {
+        id: distanceDisplay
+        width: 200
+        height: 40
+        radius: 10
+        color: "#ffffffdd"
+        border.color: "#999"
+        anchors {
+            right: parent.right
+            rightMargin: 20
+            top: parent.top
+            topMargin: 20
+        }
 
-    // Faculty of Engineering, AU Location
-    property double latitude: 31.206346974078556
-    property double longitude: 29.924636928942466
-
-    id: mapView
-
-    anchors {
-        fill: parent
+        Text {
+            anchors.centerIn: parent
+            text: calculatedDistance.length > 0 ? "Distance: " + calculatedDistance + " km" : ""
+            font.pixelSize: 14
+            color: "#333"
+        }
     }
 
-    Plugin {
-        id: mapPlugin
-        name: "osm"
-    }
-
-    // GeoLocationHandler {
-    //     id: geoHandler
-    //     onLatitudeChanged: {
-    //         map.center.latitude = latitude
-    //         console.log("Latitude updated to:", latitude);
-    //     }
-    //     onLongitudeChanged: {
-    //         map.center.longitude = longitude
-    //         console.log("Longitude updated to:", longitude);
-    //     }
-    // }
-
-    Map {
-        id: map
+    WebEngineView {
+        id: webView
         anchors.fill: parent
-        plugin: mapPlugin
-        center: QtPositioning.coordinate(latitude, longitude)
-        zoomLevel: 15
-        property geoCoordinate startCentroid
+        url: "qrc:/Map/leaflet_map.html"
 
-        MapQuickItem {
-            id: locationMarker
-            anchorPoint.x: markerImage.width / 2             // Center the marker
-            anchorPoint.y: markerImage.height                // Align bottom of the marker with the coordinate
+        onLoadingChanged: {
+            if (loadRequest.status === WebEngineView.LoadSucceededStatus) {
+                console.log("HTML page loaded");
 
-            coordinate: QtPositioning.coordinate(latitude, longitude) // Set marker position
-
-            sourceItem: Image {
-                id: markerImage
-                source: "qrc:/Images/locationMarker.png"
-                width: 40
-                height: 40
+                // Wait a bit before calling JS functions
+                Qt.callLater(() => {
+                    Qt.createQmlObject('import QtQuick 2.0; Timer { interval: 500; running: true; repeat: false; onTriggered: { webView.updateMapPosition(); } }',
+                                       webView, "DelayedJSCall");
+                });
+                backend.onLatitudeChanged.connect(updateMapPosition)
+                backend.onLongitudeChanged.connect(updateMapPosition)
+                updateMapPosition()
             }
-            Connections {
-                target: backend
-                onLongitudeChanged:{
-                    coordinate: QtPositioning.coordinate(backend.latitude , backend.longitude)
+        }
+
+        Connections {
+            target: backend
+            onDistanceChanged: {
+                mapPage.calculatedDistance = backend.distance
+            }
+        }
+
+        function updateMapPosition() {
+            runJavaScript(`
+                if (window.map && window.marker) {                          // if (window.map && window.marker)
+                    // updateCurrentLocation(31.206346974078556, 29.924636928942466);
+                    // map.setView([31.206346974078556, 29.924636928942466], 15);
+                    // marker.setLatLng([31.206346974078556, 29.924636928942466]);
+                    map.setView([${backend.latitude}, ${backend.longitude}], 15);
+                    marker.setLatLng([${backend.latitude}, ${backend.longitude}]);
                 }
-                onLaitudeChanged:{
-                    coordinate: QtPositioning.coordinate(backend.latitude , backend.longitude)
-                }
-            }
-        }
-
-        PinchHandler {
-            id: pinch
-            target: null
-            onActiveChanged: if (active) {
-                map.startCentroid = map.toCoordinate(pinch.centroid.position, false)
-            }
-            onScaleChanged: (delta) => {
-                map.zoomLevel += Math.log2(delta)
-                map.alignCoordinateToPoint(map.startCentroid, pinch.centroid.position)
-            }
-            onRotationChanged: (delta) => {
-                map.bearing -= delta
-                map.alignCoordinateToPoint(map.startCentroid, pinch.centroid.position)
-            }
-            grabPermissions: PointerHandler.TakeOverForbidden
-        }
-        WheelHandler {
-            id: wheel
-            // workaround for QTBUG-87646 / QTBUG-112394 / QTBUG-112432:
-            // Magic Mouse pretends to be a trackpad but doesn't work with PinchHandler
-            // and we don't yet distinguish mice and trackpads on Wayland either
-            acceptedDevices: Qt.platform.pluginName === "cocoa" || Qt.platform.pluginName === "wayland"
-                             ? PointerDevice.Mouse | PointerDevice.TouchPad
-                             : PointerDevice.Mouse
-            rotationScale: 1/120
-            property: "zoomLevel"
-        }
-        DragHandler {
-            id: drag
-            target: null
-            onTranslationChanged: (delta) => map.pan(-delta.x, -delta.y)
-        }
-        Shortcut {
-            enabled: map.zoomLevel < map.maximumZoomLevel
-            sequence: StandardKey.ZoomIn
-            onActivated: map.zoomLevel = Math.round(map.zoomLevel + 1)
-        }
-        Shortcut {
-            enabled: map.zoomLevel > map.minimumZoomLevel
-            sequence: StandardKey.ZoomOut
-            onActivated: map.zoomLevel = Math.round(map.zoomLevel - 1)
+            `)
         }
     }
 
@@ -132,12 +91,12 @@ Rectangle {
             topMargin: parent.height * (25/780)
         }
 
-        antialiasing: true
+        //antialiasing: true
 
         onClicked: {
             console.log("Back to Dashboard")
-            mapView.visible = false             // Hide MapView
-            showIcons()
+            mapContainer.swipeOut()            // Hide mapPage
+            sysBar.swipeIn()                   // Show system Bar
         }
     }
 
@@ -150,16 +109,18 @@ Rectangle {
             top: parent.top
             topMargin: parent.height * (25/780)
         }
+        // onLocationSelected: {
+        //     webView.runJavaScript(`map.setView([${coordinate.latitude}, ${coordinate.longitude}], 15); marker.setLatLng([${coordinate.latitude}, ${coordinate.longitude}]);`)
+        // }
+        onLocationSelected: {
+            webView.runJavaScript(`
+                updateRoute(${backend.latitude}, ${backend.longitude}, ${coordinate.latitude}, ${coordinate.longitude});
+                // updateRoute(31.206346974078556, 29.924636928942466, ${coordinate.latitude}, ${coordinate.longitude});
+                // updateDestination(${coordinate.latitude}, ${coordinate.longitude});
+                map.setView([${coordinate.latitude}, ${coordinate.longitude}], 15);
+            `);
+        }
 
-    }
 
-    function showIcons()
-    {
-        mainDashboard.visible = true       // show main Dashboard
-        mapIcon.visible = true             // show map icon
-        terminalIcon.visible = true        // show terminal icon
-        rebootIcon.visible = true          // show reboot icon
-        cameraIcon.visible = true          // show camera icon
-        serialControls.visible = true      // show serial port controls
     }
 }

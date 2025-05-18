@@ -1,47 +1,34 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>Images/background(1).png</file>
-        <file>Images/background.png</file>
-        <file>Images/background_800x300.png</file>
         <file>Images/circle.png</file>
         <file>Images/rectangle.png</file>
-        <file>Images/Speedo.png</file>
-        <file>Images/top bar.png</file>
         <file>Map/NavigationSearchBox.qml</file>
         <file>Map/MapView.qml</file>
         <file>MainDashboard.qml</file>
-        <file>Images/rectangle_cropped.png</file>
         <file>Images/Icon-Search.png</file>
         <file>Images/mapIcon.png</file>
         <file>Images/backArrow.png</file>
         <file>Images/locationMarker.png</file>
-        <file>Images/battery_light.png</file>
         <file>coordinates.txt</file>
         <file>Images/emptyBG.jpg</file>
         <file>Images/Car.png</file>
-        <file>Images/messageBoxBG.jpg</file>
         <file>Images/Model_3.svg</file>
-        <file>Images/locationlogo.png</file>
-        <file>Images/rightArrow.gif</file>
-        <file>Images/leftArrow.gif</file>
-        <file>Images/rectangle_1.png</file>
-        <file>Images/main control bar.svg</file>
         <file>Images/ok-64.png</file>
         <file>Message_screen/Message.qml</file>
         <file>Images/headlights.svg</file>
         <file>Images/lock.svg</file>
         <file>Images/heater.svg</file>
-        <file>Images/terminal.png</file>
         <file>Images/navigation_light.svg</file>
-        <file>Images/reboot.png</file>
-        <file>Images/whiteMapIcon.png</file>
         <file>UserDefined_functions/ClickableImage.qml</file>
         <file>Images/cameraicon.png</file>
         <file>Images/left.png</file>
         <file>Images/right.png</file>
-        <file>Images/siri.gif</file>
         <file>UserDefined_functions/ClickableAnimatedImage.qml</file>
         <file>Images/voiceInfo.png</file>
+        <file>Images/terminal.png</file>
+        <file>Images/reboot.png</file>
+        <file>Images/whiteMapIcon.png</file>
+        <file>Map/leaflet_map.html</file>
     </qresource>
 </RCC>

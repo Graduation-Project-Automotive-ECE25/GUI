@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"/>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+    <style>
+        html, body, #map {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map', {zoomControl: false});  //.setView([31.2001, 29.9187], 13); // Default to Alexandria
+        L.control.zoom({ position: 'bottomleft' }).addTo(map);
+        var currentMarker = L.marker([31.2001, 29.9187]);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Route variables
+        var routeControl = L.Routing.control({
+            waypoints: [
+                L.latLng(31.2072833, 29.9241801), // Default current location (31.2001, 29.9187)
+                L.latLng(31.2072833, 29.9241801)  // Default destination   31.206402922731726, 29.92477918091407
+            ],
+            routeWhileDragging: true
+        }).addTo(map);
+
+        function updateRoute(currentLat, currentLon, destLat, destLon) {
+            // Update current marker position
+            currentMarker.setLatLng([currentLat, currentLon]);
+            map.setView([currentLat, currentLon], 15); // Zoom to current location
+
+            // Update route
+            routeControl.setWaypoints([
+                L.latLng(currentLat, currentLon), // Current position
+                L.latLng(destLat, destLon)        // Destination position
+            ]);
+        }
+    </script>
+</body>
+</html>

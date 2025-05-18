@@ -1,4 +1,4 @@
-QT += core gui quick qml serialport
+QT += core gui quick qml serialport webenginequick
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # Uncomment the following line to disable all APIs deprecated before Qt 6.0.0
